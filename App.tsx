@@ -149,6 +149,26 @@ const App = () => {
     setIsGeneratingSamples(false);
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: 'Gemini Ideas',
+      text: selectedIdea ? `Check out this app idea: ${selectedIdea.title}` : 'Check out these Gemini 3 app ideas!',
+      url: window.location.href
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.log('Share cancelled');
+      }
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      // In a real app we'd show a toast, but for now alert is fine for fallback
+      alert('Link copied to clipboard!');
+    }
+  };
+
   const filteredIdeas = ideas.filter(i => 
     i.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     i.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -275,7 +295,7 @@ const App = () => {
               </div>
             </div>
             <div className="bg-white border-t border-gray-100 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] flex gap-3">
-              <Button variant="ghost" className="flex-1" onClick={() => {}}>
+              <Button variant="ghost" className="flex-1" onClick={handleShare}>
                 <Share size={20} />
                 Share
               </Button>
